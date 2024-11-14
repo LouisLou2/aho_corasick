@@ -21,7 +21,7 @@
 #
 # Project Properties
 #
-CMAKE_MINIMUM_REQUIRED (VERSION 2.6.2)
+CMAKE_MINIMUM_REQUIRED (VERSION 3.10)  # 更新为 CMake 3.10 或更高版本
 PROJECT (aho_corasick)
 
 #
@@ -42,10 +42,11 @@ SET (CMAKE_MODULE_PATH "${MAINFOLDER}/cmake")
 INCLUDE_DIRECTORIES ("${MAINFOLDER}/src")
 
 #
-# Enable C++11
+# Enable C++23
 #
-INCLUDE (EnableStdCXX11)
-ENABLE_STDCXX11 ()
+SET (CMAKE_CXX_STANDARD 17)
+SET (CMAKE_CXX_STANDARD_REQUIRED ON)
+SET (CMAKE_CXX_EXTENSIONS OFF)
 
 #
 # Recurse source sub-directories

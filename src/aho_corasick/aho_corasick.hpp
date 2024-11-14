@@ -23,8 +23,10 @@
 #ifndef AHO_CORASICK_HPP
 #define AHO_CORASICK_HPP
 
+#include <string_view>
 #include <algorithm>
 #include <cctype>
+#include <limits>
 #include <map>
 #include <memory>
 #include <set>
@@ -107,10 +109,10 @@ namespace aho_corasick {
 						d_intervals.push_back(i);
 					}
 				}
-				if (to_left.size() > 0) {
+				if (!to_left.empty()) {
 					d_left.reset(new node(to_left));
 				}
-				if (to_right.size() > 0) {
+				if (!to_right.empty()) {
 					d_right.reset(new node(to_right));
 				}
 			}
@@ -293,10 +295,10 @@ namespace aho_corasick {
 	template<typename CharType>
 	class state {
 	public:
-		typedef state<CharType>*                 ptr;
-		typedef std::unique_ptr<state<CharType>> unique_ptr;
-		typedef std::basic_string<CharType>      string_type;
-		typedef std::basic_string<CharType>&     string_ref_type;
+		typedef state*                 ptr;
+		typedef std::unique_ptr<state> unique_ptr;
+		typedef std::basic_string_view<CharType>      string_type;
+		typedef std::basic_string_view<CharType>&     string_ref_type;
 		typedef std::pair<string_type, unsigned> key_index;
 		typedef std::set<key_index>              string_collection;
 		typedef std::vector<ptr>                 state_collection;
@@ -336,7 +338,7 @@ namespace aho_corasick {
 			return next;
 		}
 
-		size_t get_depth() const { return d_depth; }
+		[[nodiscard]] size_t get_depth() const { return d_depth; }
 
 		void add_emit(string_ref_type keyword, unsigned index) {
 			d_emits.insert(std::make_pair(keyword, index));
@@ -387,8 +389,8 @@ namespace aho_corasick {
 	template<typename CharType>
 	class basic_trie {
 	public:
-		using string_type = std::basic_string < CharType > ;
-		using string_ref_type = std::basic_string<CharType>&;
+		using string_type = std::basic_string_view < CharType > ;
+		using string_ref_type = std::basic_string_view<CharType>&;
 
 		typedef state<CharType>         state_type;
 		typedef state<CharType>*        state_ptr_type;
@@ -408,13 +410,13 @@ namespace aho_corasick {
 				, d_only_whole_words(false)
 				, d_case_insensitive(false) {}
 
-			bool is_allow_overlaps() const { return d_allow_overlaps; }
+			[[nodiscard]] bool is_allow_overlaps() const { return d_allow_overlaps; }
 			void set_allow_overlaps(bool val) { d_allow_overlaps = val; }
 
-			bool is_only_whole_words() const { return d_only_whole_words; }
+			[[nodiscard]] bool is_only_whole_words() const { return d_only_whole_words; }
 			void set_only_whole_words(bool val) { d_only_whole_words = val; }
 
-			bool is_case_insensitive() const { return d_case_insensitive; }
+			[[nodiscard]] bool is_case_insensitive() const { return d_case_insensitive; }
 			void set_case_insensitive(bool val) { d_case_insensitive = val; }
 		};
 
@@ -427,7 +429,7 @@ namespace aho_corasick {
 	public:
 		basic_trie(): basic_trie(config()) {}
 
-		basic_trie(const config& c)
+		explicit basic_trie(const config& c)
 			: d_root(new state_type())
 			, d_config(c)
 			, d_constructed_failure_states(false) {}
